@@ -1,0 +1,29 @@
+digraph Tree {
+node [shape=box, style="filled, rounded", color="black", fontname=helvetica] ;
+edge [fontname=helvetica] ;
+0 [label=<time &le; 0.254<br/>gini = 0.436<br/>samples = 209<br/>value = [142, 67]<br/>class = 1>, fillcolor="#f1bc96"] ;
+1 [label=<ejection_fraction &le; 0.192<br/>gini = 0.289<br/>samples = 57<br/>value = [10, 47]<br/>class = 0>, fillcolor="#63b2eb"] ;
+0 -> 1 [labeldistance=2.5, labelangle=45, headlabel="True"] ;
+2 [label=<gini = 0.0<br/>samples = 17<br/>value = [0, 17]<br/>class = 0>, fillcolor="#399de5"] ;
+1 -> 2 ;
+3 [label=<time &le; 0.175<br/>gini = 0.375<br/>samples = 40<br/>value = [10, 30]<br/>class = 0>, fillcolor="#7bbeee"] ;
+1 -> 3 ;
+4 [label=<gini = 0.257<br/>samples = 33<br/>value = [5, 28]<br/>class = 0>, fillcolor="#5caeea"] ;
+3 -> 4 ;
+5 [label=<gini = 0.408<br/>samples = 7<br/>value = [5, 2]<br/>class = 1>, fillcolor="#efb388"] ;
+3 -> 5 ;
+6 [label=<serum_creatinine &le; 0.107<br/>gini = 0.229<br/>samples = 152<br/>value = [132, 20]<br/>class = 1>, fillcolor="#e99457"] ;
+0 -> 6 [labeldistance=2.5, labelangle=-45, headlabel="False"] ;
+7 [label=<ejection_fraction &le; 0.192<br/>gini = 0.118<br/>samples = 127<br/>value = [119, 8]<br/>class = 1>, fillcolor="#e78946"] ;
+6 -> 7 ;
+8 [label=<gini = 0.444<br/>samples = 15<br/>value = [10, 5]<br/>class = 1>, fillcolor="#f2c09c"] ;
+7 -> 8 ;
+9 [label=<gini = 0.052<br/>samples = 112<br/>value = [109, 3]<br/>class = 1>, fillcolor="#e6843e"] ;
+7 -> 9 ;
+10 [label=<ejection_fraction &le; 0.115<br/>gini = 0.499<br/>samples = 25<br/>value = [13, 12]<br/>class = 1>, fillcolor="#fdf5f0"] ;
+6 -> 10 ;
+11 [label=<gini = 0.0<br/>samples = 4<br/>value = [0, 4]<br/>class = 0>, fillcolor="#399de5"] ;
+10 -> 11 ;
+12 [label=<gini = 0.472<br/>samples = 21<br/>value = [13, 8]<br/>class = 1>, fillcolor="#f5cfb3"] ;
+10 -> 12 ;
+}
