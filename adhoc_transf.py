@@ -16,7 +16,7 @@ class ageRounder(BaseEstimator, TransformerMixin):
     def rounder (self,df):
     #Some fetures content seems to have the character \t.
     #Let's remove such character for the sake of consistency
-        print('\n>>>>>>>>Calling rounder')      
+        #print('\n>>>>>>>>Calling rounder')      
         df['age']=np.around(df['age'])
         return df
     
@@ -38,6 +38,10 @@ class ageRounder(BaseEstimator, TransformerMixin):
 #**************************************************************
 #************Below it is inherited from CKD predictor
 #**************************************************************
+def misspellingCorrector(df):
+    df.iloc[:] = df.iloc[:].str.replace(r'\t','')
+    df.iloc[:] = df.iloc[:].str.replace(r' ','')
+    return df
 
 
 #Class for correcting misspelling of features and target columns
@@ -78,8 +82,10 @@ class misspellingTransformer(BaseEstimator, TransformerMixin):
         
         for i in range(0, len(df.columns)):            
             if df.dtypes[i]==np.object:
-                df.iloc[:,i] = df.iloc[:,i].str.replace(r'\t','')
-                df.iloc[:,i] = df.iloc[:,i].str.replace(r' ','')
+                #df.iloc[:,i] = df.iloc[:,i].str.replace(r'\t','')
+                #df.iloc[:,i] = df.iloc[:,i].str.replace(r' ','')
+                df.iloc[:,i] = df.iloc[:,i].replace(r'\t','')
+                df.iloc[:,i] = df.iloc[:,i].replace(r' ','')
         return df
     
     def __init__(self):
@@ -108,29 +114,13 @@ class CastDown(BaseEstimator, TransformerMixin):
     
     def transform(self, X, y=None):
         print('\n>>>>>>>>Calling transform() from CastDown')
-        X[:,1][X[:,1]==5]=4
-        X[:,2][X[:,2]==5]=4
+        for i in range(0, len(X.columns)):            
+            X.iloc[:,i] = X.iloc[:,i].replace(5,4)
         return X
-    
-#Class to be included in FeatureUnion pipeline for casting numeric columns to float64 
-class Numeric_Cast(BaseEstimator, TransformerMixin):
-    def num_feat_cast(self,df, num_cat):
-        for i in range(len(num_cat)):
-            #df[i]=pd.to_numeric(df[i],errors='coerce')
-            df.loc[:,num_cat[i]]=pd.to_numeric(df.loc[:,num_cat[i]],errors='coerce')
-        return df 
-    
-    def __init__(self, num_feat):
-        self.num_feat=num_feat        
-    def fit(self, X,y=None):
-        #print('inside fit Numeric_Cast, tuple leng', len(X))
-        return self
-    def transform(self, X,y=None):    
-        #print ('Content of X', X)
-        X=self.num_feat_cast(X,self.num_feat)
-        return X    
-    def fit_transform(self, X,y=None):    
-        return self.fit(X, y).transform(X, y)
+        # X[:,0][X[:,0]==5]=4
+        # X[:,1][X[:,1]==5]=4
+        # return X
+
     
 #Class to be included in TransfromColumn pipeline for casting numeric columns to float64 
 class Numeric_Cast_Column(BaseEstimator, TransformerMixin):  
@@ -151,23 +141,6 @@ class Numeric_Cast_Column(BaseEstimator, TransformerMixin):
     def fit_transform(self, X,y=None):    
         return self.fit(X, y).transform(X, y)
 
-#Class to be included in Feature pipeline for casting category columns to float64
-class Category_Cast(BaseEstimator, TransformerMixin):
-    
-    def cat_feat_cast(self, df, cat_features):
-        for i in range(len(cat_features)):
-            df.loc[:,cat_features[i]]=df.loc[:,cat_features[i]].astype('category')
-        #df.info() 
-        return df
-    def __init__(self, cat_features):
-        self.cat_features=cat_features
-    def fit(self, X,y=None):        
-        return self
-    def transform(self, X,y=None):
-        X=self.cat_feat_cast(X,self.cat_features)        
-        return X
-    def fit_transform(self, X,y=None):    
-        return self.fit(X, y).transform(X, y)
 
 #Class to be included in TransfromColumn pipeline for casting numeric columns to float64 
 class Category_Cast_Column(BaseEstimator, TransformerMixin):  
@@ -192,24 +165,25 @@ class Category_Cast_Column(BaseEstimator, TransformerMixin):
 
 
 
-def num_feat_cast(df, num_cat):
-    #Lets convert pcv,wc and rc dtype to float64 dtype and if any strange character appears it turns to NAN
-    # df['pcv']=pd.to_numeric(df['pcv'],errors='coerce')
-    # df['wc']=pd.to_numeric(df['wc'],errors='coerce')   
-    # df['rc']=pd.to_numeric(df['rc'],errors='coerce')
-    for i in range(len(num_cat)):
-        #df[i]=pd.to_numeric(df[i],errors='coerce')
-        df.loc[:,num_cat[i]]=pd.to_numeric(df.loc[:,num_cat[i]],errors='coerce')
-    return df
-
-def cat_feat_cast(df, cat_features):
-    #Lets convert rbc, pc, pcc, ba, htn, dm, cad, appet, pe, ane to category
-    #also features sg, al, su will be set to category
-    for i in range(len(cat_features)):
-        df.loc[:,cat_features[i]]=df.loc[:,cat_features[i]].astype('category')
-    #df.info() 
-    return df 
-
-def target_to_cat(df, target):
-    df.loc[:,target]=df.loc[:,target].astype('category')
-    return df
+class ageRounder(BaseEstimator, TransformerMixin):
+    def rounder (self,df):
+    #Some fetures content seems to have the character \t.
+    #Let's remove such character for the sake of consistency
+        print('\n>>>>>>>>Calling rounder')      
+        df['age']=np.around(df.loc[:,'age'])
+        return df
+    
+    def __init__(self):
+        print('\n>>>>>>>>Calling init() from ageRounder')
+            
+    def fit(self, X, y=None):
+        print('\n>>>>>>>>Calling fit() from ageRounder')
+        return self
+    
+    def transform(self,X,y=None):
+        print('\n>>>>>>>>Calling transform() from ageRounder')        
+        df=self.rounder(X)       
+        return df
+    
+    def fit_transform(self, X, y=None,):
+        return self.fit(X, y).transform(X, y)

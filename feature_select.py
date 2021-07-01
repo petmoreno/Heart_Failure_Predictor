@@ -27,11 +27,11 @@ from sklearn.base import BaseEstimator, TransformerMixin
 #Function to take a df with num attributes and cat target and return df with k_out_features
 
 def feat_sel_Num_to_Cat(X, y, k_out_features):
-    fs,p=SelectKBest(score_func=f_classif, k=k_out_features)
+    fs=SelectKBest(score_func=f_classif, k=k_out_features)
     df_sel=fs.fit_transform(X, y)
     if k_out_features=='all':
         for i in range(len(fs.scores_)):
-            print('Feature of feat_sel_Num_to_Cat %s: %f' % (X.columns[i], fs.scores_[i],p.scores_[i]))
+            print('Feature of feat_sel_Num_to_Cat %s: %f' % (X.columns[i], fs.scores_[i]))
     #we have to create a dataframe
     cols=fs.get_support(indices=True)
     df_sel=X.iloc[:,cols]
@@ -86,7 +86,7 @@ def feat_sel_RFE(X,y,k_out_features=None, estimator='LogisticRegression'):
         score_list =[]
         from sklearn.model_selection import train_test_split
         for n in range(len(nof_list)):
-            rfe = RFE(model,nof_list[n])
+            rfe = RFE(model,n_features_to_select=nof_list[n])
             X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = 0.3, random_state = 0)
             X_train_rfe = rfe.fit_transform(X_train,y_train)
             X_test_rfe = rfe.transform(X_test)
@@ -101,15 +101,14 @@ def feat_sel_RFE(X,y,k_out_features=None, estimator='LogisticRegression'):
         k_out_features=nof
                 
     #obtain the pruned resultant df of features
-    rfe=RFE(model,k_out_features)
+    rfe=RFE(model,n_features_to_select=k_out_features)
     fit = rfe.fit(X, y)
     X_pruned=rfe.fit_transform(X,y)
     mask=fit.support_
     X_pruned=X.iloc[:,mask]
     print("Num Features: %d" % fit.n_features_)
-    print("Selected Features: %s" % X.columns[fit.support_])
+    print("Selected Features: %s" % fit.support_)
     print("Feature Ranking: %s" % fit.ranking_)
-    print()
     return X_pruned
         
 #RFECV with the LogisticRegression estimator as default
@@ -126,7 +125,7 @@ def feat_sel_RFECV(X,y, estimator="LogisticRegression"):
     mask=fit.support_
     X_pruned=X.iloc[:,mask]
     print("Num Features: %d" % fit.n_features_)
-    print("Selected Features: %s" % X.columns[fit.support_])
+    print("Selected Features: %s" % fit.support_)
     print("Feature Ranking: %s" % fit.ranking_)
     return X_pruned
 
@@ -264,7 +263,7 @@ class RidgeCV_FeatSel(BaseEstimator, TransformerMixin):
         
     def transform(self,X):
         print('\n>>>>>>>>Calling transform() from RidgeCV_FeatSel')
-        coef = pd.Series(reg.coef_, index = X.columns)
+        coef = pd.Series(self.reg.coef_, index = X.columns)
         feat_sel=coef>=0
         X_pruned=X[feat_sel.index[feat_sel]]        
         return X_pruned

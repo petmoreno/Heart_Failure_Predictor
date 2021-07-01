@@ -13,6 +13,7 @@ from sklearn.impute import KNNImputer
 
 #This file contains functions defined to handle missing values imputation
 import my_utils
+import time
 
 from sklearn.base import BaseEstimator, TransformerMixin
 
@@ -36,7 +37,7 @@ class Numeric_Imputer(BaseEstimator, TransformerMixin):
     #iterative: multiple imputation by using IterativeImputer
     #knn: KNN imputation
     def __init__(self,strategy='median'):
-        print('\n>>>>>>>>Calling init() from Numeric_Imputer')
+        print('\n',time.ctime(),'>>>>>>>>Calling init() from Numeric_Imputer')
         self.strategy=strategy
         
         if self.strategy=='median':
@@ -49,12 +50,12 @@ class Numeric_Imputer(BaseEstimator, TransformerMixin):
             self.num_imputer=KNNImputer()
     
     def fit(self,X,y=None):
-        print('\n>>>>>>>>Calling fit() from Numeric_Imputer')
+        print('\n',time.ctime(),'>>>>>>>>Calling fit() from Numeric_Imputer')
         self.num_imputer.fit(X,y)
         return self
     
     def transform(self,X,y=None):
-        print('\n>>>>>>>>Calling transform() from Numeric_Imputer')
+        print('\n',time.ctime(),'>>>>>>>>Calling transform() from Numeric_Imputer')
         X=self.num_imputer.transform(X)
         return X
     
@@ -65,7 +66,7 @@ class Category_Imputer(BaseEstimator, TransformerMixin):
     #constant: simple imputation by adding new category unknown to NaN values
     
     def __init__(self,strategy='most_frequent'):
-        print('\n>>>>>>>>Calling init() from Category_Imputer')
+        print('\n',time.ctime(),'>>>>>>>>Calling init() from Category_Imputer')
         self.strategy=strategy
         if self.strategy=='most_frequent':
             self.cat_imputer=SimpleImputer(strategy=self.strategy)
@@ -74,12 +75,12 @@ class Category_Imputer(BaseEstimator, TransformerMixin):
         
     
     def fit(self,X,y=None):
-        print('\n>>>>>>>>Calling fit() from Category_Imputer')
+        print('\n',time.ctime(),'>>>>>>>>Calling fit() from Category_Imputer')
         self.cat_imputer.fit(X,y)
         return self
     
     def transform(self,X,y=None):
-        print('\n>>>>>>>>Calling transform() from Category_Imputer')
+        print('\n',time.ctime(),'>>>>>>>>Calling transform() from Category_Imputer')
         X=self.cat_imputer.transform(X)
         return X
 
