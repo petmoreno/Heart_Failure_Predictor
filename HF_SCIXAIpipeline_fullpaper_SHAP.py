@@ -187,22 +187,25 @@ pipe_shap_xtree=Pipeline([('data_prep',dataprep_merge_feat_xtree),
                           ('clf', extratree_clf)])
 pipe_shap_xtree.fit(X_train_feat_sel, y_train)
 #%%
-explainer=shap.explainers.Tree(pipe_shap_xtree.named_steps['clf'], pipe_shap_xtree.named_steps['data_prep'].fit_transform(X_train_feat_sel))
-shap_values=explainer.shap_values(pipe_shap_xtree.named_steps['data_prep'].fit_transform(X_train_feat_sel))
+explainer_train=shap.explainers.Tree(pipe_shap_xtree.named_steps['clf'], pipe_shap_xtree.named_steps['data_prep'].fit_transform(X_train_feat_sel))
+shap_values_train=explainer_train.shap_values(pipe_shap_xtree.named_steps['data_prep'].fit_transform(X_train_feat_sel))
 
 #%%
-explainer=shap.explainers.Tree(pipe_shap_xtree.named_steps['clf'], pipe_shap_xtree.named_steps['data_prep'].fit_transform(X_train_feat_sel))
-shap_values=explainer.shap_values(X_train_feat_sel)
+# explainer=shap.explainers.Tree(pipe_shap_xtree.named_steps['clf'], pipe_shap_xtree.named_steps['data_prep'].fit_transform(X_train_feat_sel))
+# shap_values=explainer.shap_values(X_train_feat_sel)
 
 #%%
-np.shape(shap_values)
+np.shape(shap_values_train)
 
 # %%
-shap.summary_plot(shap_values, X_train_feat_sel,plot_type="bar")
+shap.summary_plot(shap_values_train, X_train_feat_sel,plot_type="bar")
 # %%
-shap.summary_plot(shap_values[0], X_train_feat_sel,plot_type="dot")
+shap.summary_plot(shap_values_train[0], X_train_feat_sel,plot_type="dot")
 #%%
-shap.summary_plot(shap_values[1], X_train_feat_sel,plot_type="dot")
+shap.summary_plot(shap_values_train[1], X_train_feat_sel,plot_type="dot")
+# %%
+shap.summary_plot(shap_values_train[1], X_train_feat_sel,plot_type="bar")
+
 
 #%%
 X_train_feat_sel.head()
@@ -210,8 +213,8 @@ X_train_feat_sel.head()
 #%%
 #local explainability
 ##########################################################
-y_pred = extratree_clf.predict(df_X_test_featsel)
-print('y_pred',y_pred)
+y_pred_test= extratree_clf.predict(df_X_test_featsel)
+print('y_pred',y_pred_test)
 print('y_test',y_test)
 #%%
 y_pred_train = extratree_clf.predict(df_X_train_featsel)
@@ -219,11 +222,11 @@ print('y_pred_train',y_pred_train)
 print('y_train',y_train)
 
 #%%
-explainer=shap.explainers.Tree(pipe_shap_xtree.named_steps['clf'], pipe_shap_xtree.named_steps['data_prep'].fit_transform(X_test_feat_sel))
-shap_values=explainer.shap_values(pipe_shap_xtree.named_steps['data_prep'].fit_transform(X_test_feat_sel))
+explainer_test=shap.explainers.Tree(pipe_shap_xtree.named_steps['clf'], pipe_shap_xtree.named_steps['data_prep'].fit_transform(X_test_feat_sel))
+shap_values_test=explainer_test.shap_values(pipe_shap_xtree.named_steps['data_prep'].fit_transform(X_test_feat_sel))
 
 # %%
-np.shape(shap_values)
+np.shape(shap_values_test)
 # %%
 #%%
 #True negative instance
@@ -231,29 +234,29 @@ index_TN_shap=0
 print(df_X_test_featsel.iloc[index_TN_shap])
 print(X_test_feat_sel.iloc[index_TN_shap])
 print('Actual Label:', y_test[index_TN_shap])
-print('Predicted Label:', y_pred[index_TN_shap])
+print('Predicted Label:', y_pred_test[index_TN_shap])
 choosen_instance_tn=df_X_test_featsel.iloc[index_TN_shap]
 
 # %%
-shap_values_tn = explainer.shap_values(choosen_instance_tn)
-shap.force_plot(explainer.expected_value[0], shap_values_tn[0], X_test_feat_sel.iloc[index_TN_shap])
+shap_values_test_tn = explainer_test.shap_values(choosen_instance_tn)
+shap.force_plot(explainer_test.expected_value[0], shap_values_test_tn[0], X_test_feat_sel.iloc[index_TN_shap])
 
 # %%
-shap.plots._waterfall.waterfall_legacy(explainer.expected_value[0], shap_values_tn[0], X_test_feat_sel.iloc[index_TN_shap])
+shap.plots._waterfall.waterfall_legacy(explainer_test.expected_value[1], shap_values_test_tn[1], X_test_feat_sel.iloc[index_TN_shap])
 
 # %%
 index_TP_shap=2
 print(df_X_test_featsel.iloc[index_TP_shap])
 print(X_test_feat_sel.iloc[index_TP_shap])
 print('Actual Label:', y_test[index_TP_shap])
-print('Predicted Label:', y_pred[index_TP_shap])
+print('Predicted Label:', y_pred_test[index_TP_shap])
 choosen_instance_tp=df_X_test_featsel.iloc[index_TP_shap]
 
 # %%
-shap_values_tp = explainer.shap_values(choosen_instance_tp)
-shap.force_plot(explainer.expected_value[1], shap_values_tp[1], X_test_feat_sel.iloc[index_TP_shap])
+shap_values_test_tp = explainer_test.shap_values(choosen_instance_tp)
+shap.force_plot(explainer_test.expected_value[1], shap_values_test_tp[1], X_test_feat_sel.iloc[index_TP_shap])
 #%%
-shap.plots._waterfall.waterfall_legacy(explainer.expected_value[1], shap_values_tp[1], X_test_feat_sel.iloc[index_TP_shap])
+shap.plots._waterfall.waterfall_legacy(explainer_test.expected_value[1], shap_values_test_tp[1], X_test_feat_sel.iloc[index_TP_shap])
 
 #%%
 index_TN_shap_train = 1
@@ -263,8 +266,11 @@ print('Actual Label:', y_train[index_TN_shap_train])
 print('Predicted Label:', y_pred_train[index_TN_shap_train])
 choosen_instance_tn_train=df_X_train_featsel.iloc[index_TN_shap_train]
 #%%
-shap_values_tn_train = explainer.shap_values(choosen_instance_tn_train)
-shap.force_plot(explainer.expected_value[0], shap_values_tn_train[0], choosen_instance_tn_train)
+shap_values_tn_train = explainer_train.shap_values(choosen_instance_tn_train)
+shap.force_plot(explainer_train.expected_value[1], shap_values_tn_train[1], choosen_instance_tn_train)
+#%%
+shap.plots._waterfall.waterfall_legacy(explainer_train.expected_value[1], shap_values_tn_train[1], X_train_feat_sel.iloc[index_TN_shap_train])
+
 #%%
 shap_values_tn_train
 #%%
@@ -275,5 +281,9 @@ print('Actual Label:', y_train[index_TP_shap_train])
 print('Predicted Label:', y_pred_train[index_TP_shap_train])
 choosen_instance_tp_train=X_train_feat_sel.iloc[index_TP_shap_train]
 #%%
-shap_values_tp_train = explainer.shap_values(choosen_instance_tp_train)
-shap.force_plot(explainer.expected_value[1], shap_values_tp_train[1], choosen_instance_tp_train)
+shap_values_tp_train = explainer_train.shap_values(choosen_instance_tp_train)
+shap.force_plot(explainer_train.expected_value[1], shap_values_tp_train[1], X_train_feat_sel.iloc[index_TP_shap_train])
+
+# %%
+shap.plots._waterfall.waterfall_legacy(explainer_train.expected_value[1], shap_values_tp_train[1], X_train_feat_sel.iloc[index_TP_shap_train])
+# %%
