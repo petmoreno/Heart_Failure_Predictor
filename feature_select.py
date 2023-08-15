@@ -280,7 +280,9 @@ class Feature_Selector(BaseEstimator, TransformerMixin):
     #LassoCV: performing LassoCV valid for numeric/category input and category output
     #RidgeCV: performing RidgeCV valid for numeric/category input and category output
     
-    #def __init__(self,y_train,strategy='wrapper_RFECV',k_out_features=5, rfe_estimator='LogisticRegression'):       
+    #def __init__(self,y_train,strategy='wrapper_RFECV',k_out_features=5, rfe_estimator='LogisticRegression'):
+    
+
     def __init__(self,strategy='wrapper_RFECV',k_out_features=5, rfe_estimator='LogisticRegression'):
         print('\n>>>>>>>>Calling init() from Feature_Selector')
         
@@ -288,6 +290,7 @@ class Feature_Selector(BaseEstimator, TransformerMixin):
         self.strategy=strategy
         self.k_out_features=k_out_features
         self.rfe_estimator=rfe_estimator
+        #self.feat_sel
         
         if self.strategy=='filter_num':
             self.feat_sel=SelectKBest(score_func=f_classif, k=self.k_out_features)
